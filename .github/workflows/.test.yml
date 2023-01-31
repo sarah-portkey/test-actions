@@ -1,0 +1,26 @@
+name: test
+
+on:
+  [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: borales/actions-yarn@v2.0.0 # 采用 yarn 安装依赖
+        with:
+          cmd: install # 将运行 `yarn install` 命令
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: test # 将运行 `yarn test` 命令
+      - name: Upload coverage to Codecov # 设置当前工作流名字
+        id: coverage-codecov
+        uses: codecov/codecov-action@v1.0.5
+        with:
+          name: test-action # 上传报告的名字
+          token: ${{ secrets.CODECOV_TOKEN }} # 秘钥
+          file: ./coverage/clover.xml # 生成的单元测试
+          flags:  unittests # 单元测试 标识
+          # yml: ./codecov.yml # codecov 的配置
+          fail_ci_if_error: true # 上传单元报告失败是否整个 Actions 失败
